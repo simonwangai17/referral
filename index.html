@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Referral Data</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+
+    .navbar {
+      background-color: #2f855a;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar button {
+      background-color: white;
+      color: #2f855a;
+      border: 1px solid #2f855a;
+      padding: 5px 15px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .navbar button:hover {
+      background-color: #2f855a;
+      color: white;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    table th {
+      background-color: #2f855a;
+      color: white;
+    }
+
+    .back-button {
+      display: inline-block;
+      background-color: #2f855a;
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .back-button:hover {
+      background-color: #276749;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <h2>Referral Data</h2>
+    <button onclick="window.location.href='https://simonwangai17.github.io/dash/'">Lead</button>
+  </div>
+
+  <!-- Container -->
+  <div class="container">
+    <h3>Agent Referrals</h3>
+    <table id="referralTable">
+      <thead>
+        <tr>
+          <th>Agent Name</th>
+          <th>Username</th>
+          <th>Reference Code</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data will be populated dynamically here -->
+      </tbody>
+    </table>
+    <a class="back-button" href="https://simonwangai17.github.io/dash/">Back</a>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // Google Sheets CSV Export Link
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRzuvY1g7976VnQlNpIaPBtusFx2Mdj-E7azp81jHZvkhCpxd4fdPz3tdnBZGJk6KIOHj5fClBaTzOA/pub?gid=858825955&single=true&output=csv";
+
+    // Fetch and Populate Table
+    function fetchReferralData() {
+      fetch(csvUrl)
+        .then(response => response.text())
+        .then(csvData => {
+          const rows = csvData.split("\n").slice(1); // Skip header row
+          const tableBody = document.querySelector("#referralTable tbody");
+          tableBody.innerHTML = ""; // Clear existing table data
+
+          rows.forEach(row => {
+            const [agentName, username, referenceCode] = row.split(","); // Extract required columns
+            if (agentName && username && referenceCode) { // Check if data exists
+              const tr = document.createElement("tr");
+              tr.innerHTML = `
+                <td>${agentName}</td>
+                <td>${username}</td>
+                <td>${referenceCode}</td>
+              `;
+              tableBody.appendChild(tr);
+            }
+          });
+        })
+        .catch(error => console.error("Error fetching data:", error));
+    }
+
+    // Refresh Data Every 30 Seconds
+    setInterval(fetchReferralData, 30000);
+
+    // Initial Data Fetch
+    fetchReferralData();
+  </script>
+</body>
+</html>
